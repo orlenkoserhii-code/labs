@@ -178,7 +178,6 @@ async function loadSeveritySummary() {
       return;
     }
 
-    // 4. Безпечний DOM-вивід
     for (const item of summaryData) {
       const li = document.createElement("li");
 
@@ -191,7 +190,6 @@ async function loadSeveritySummary() {
       summaryElement.append(li);
     }
   } catch (error) {
-    // 5. Безпечна помилка
     summaryElement.textContent = `Помилка: ${error.message}`;
   }
 }
