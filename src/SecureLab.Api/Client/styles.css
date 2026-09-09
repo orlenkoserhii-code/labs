@@ -132,6 +132,19 @@ select {
   color: #5c6b80;
 }
 
+.severity-Critical {
+  border-left: 5px solid #dc3545;
+}
+.severity-High {
+  border-left: 5px solid #fd7e14;
+}
+.severity-Medium {
+  border-left: 5px solid #ffc107;
+}
+.severity-Low {
+  border-left: 5px solid #198754;
+}
+
 @media (max-width: 760px) {
   .page-header,
   .toolbar,

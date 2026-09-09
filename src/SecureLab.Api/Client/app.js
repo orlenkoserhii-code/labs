@@ -122,6 +122,47 @@ filterForm.addEventListener("submit", (event) => {
   loadIncidents();
 });
 
+const severityWeights = {
+  Critical: 4,
+  High: 3,
+  Medium: 2,
+  Low: 1,
+};
+
+function renderIncidentList(incidents) {
+  listElement.replaceChildren();
+
+  if (incidents.length === 0) {
+    listStatusElement.textContent = "За заданим фільтром інцидентів немає.";
+    return;
+  }
+
+  incidents.sort(
+    (a, b) => severityWeights[b.severity] - severityWeights[a.severity],
+  );
+
+  listStatusElement.textContent = `Знайдено: ${incidents.length}`;
+  for (const incident of incidents) {
+    const item = document.createElement("li");
+    const button = document.createElement("button");
+    button.type = "button";
+
+    button.className = `incident-card severity-${incident.severity}`;
+
+    button.append(
+      createTextElement("strong", incident.title),
+      createTextElement(
+        "span",
+        `${incident.severity} · ${incident.status}`,
+        "metadata",
+      ),
+    );
+    button.addEventListener("click", () => loadIncidentDetails(incident.id));
+    item.append(button);
+    listElement.append(item);
+  }
+}
+
 async function loadSeveritySummary() {
   try {
     const summaryData = await apiFetch("/api/incidents/severity-summary");
@@ -132,12 +173,18 @@ async function loadSeveritySummary() {
       return;
     }
 
+    summaryData.sort(
+      (a, b) => severityWeights[b.severity] - severityWeights[a.severity],
+    );
+
     for (const item of summaryData) {
       const li = document.createElement("li");
 
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "incident-card";
+
+      // Добавляем динамический класс подсветки
+      button.className = `incident-card severity-${item.severity}`;
       button.textContent = `${item.severity}: ${item.count}`;
 
       li.append(button);
