@@ -164,6 +164,9 @@ function renderIncidentList(incidents) {
 }
 
 async function loadSeveritySummary() {
+  summaryElement.innerHTML =
+    '<li class="details-placeholder">Завантаження…</li>';
+
   try {
     const summaryData = await apiFetch("/api/incidents/severity-summary");
     summaryElement.replaceChildren();
@@ -173,17 +176,11 @@ async function loadSeveritySummary() {
       return;
     }
 
-    summaryData.sort(
-      (a, b) => severityWeights[b.severity] - severityWeights[a.severity],
-    );
-
     for (const item of summaryData) {
       const li = document.createElement("li");
 
       const button = document.createElement("button");
       button.type = "button";
-
-      // Добавляем динамический класс подсветки
       button.className = `incident-card severity-${item.severity}`;
       button.textContent = `${item.severity}: ${item.count}`;
 
