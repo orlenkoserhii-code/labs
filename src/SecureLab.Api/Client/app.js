@@ -164,8 +164,10 @@ function renderIncidentList(incidents) {
 }
 
 async function loadSeveritySummary() {
-  summaryElement.innerHTML =
-    '<li class="details-placeholder">Завантаження…</li>';
+  const loadingItem = document.createElement("li");
+  loadingItem.className = "details-placeholder";
+  loadingItem.textContent = "Завантаження…";
+  summaryElement.replaceChildren(loadingItem);
 
   try {
     const summaryData = await apiFetch("/api/incidents/severity-summary");
@@ -176,6 +178,7 @@ async function loadSeveritySummary() {
       return;
     }
 
+    // 4. Безпечний DOM-вивід
     for (const item of summaryData) {
       const li = document.createElement("li");
 
@@ -188,6 +191,7 @@ async function loadSeveritySummary() {
       summaryElement.append(li);
     }
   } catch (error) {
+    // 5. Безпечна помилка
     summaryElement.textContent = `Помилка: ${error.message}`;
   }
 }
