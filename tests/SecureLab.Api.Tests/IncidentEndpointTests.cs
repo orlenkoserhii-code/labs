@@ -77,4 +77,46 @@ public sealed class IncidentEndpointTests(SecureLabApiFactory factory)
         Assert.Equal("Low", summary[3].Severity);
         Assert.Equal(1, summary[3].Count);
     }
+
+    [Fact]
+    public async Task GetSeveritySummary_WithTriagedStatus_CountsOnlyTriaged()
+    {
+        using var response = await _client.GetAsync("/api/incidents/severity-summary?status=Triaged");
+        var summary = await response.Content.ReadFromJsonAsync<List<IncidentSeveritySummaryResponse>>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(summary);
+        Assert.Equal(4, summary.Count);
+        Assert.Equal(1, summary.Single(item => item.Severity == "Medium").Count);
+        Assert.Equal(0, summary.Single(item => item.Severity == "High").Count);
+        Assert.Equal(0, summary.Single(item => item.Severity == "Low").Count);
+        Assert.Equal(0, summary.Single(item => item.Severity == "Critical").Count);
+    }
+
+    [Fact]
+    public async Task GetSeveritySummary_WithResolvedStatus_ReturnsAllZeroGroups()
+    {
+        using var response = await _client.GetAsync("/api/incidents/severity-summary?status=Resolved");
+        var summary = await response.Content.ReadFromJsonAsync<List<IncidentSeveritySummaryResponse>>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(summary);
+        Assert.Equal(4, summary.Count);
+        Assert.All(summary, item => Assert.Equal(0, item.Count));
+    }
+
+    [Theory]
+    [InlineData("Unknown")]
+    [InlineData("1")]
+    [InlineData("New,Closed")]
+    public async Task GetSeveritySummary_WithInvalidStatus_ReturnsValidationProblem400(string status)
+    {
+        using var response = await _client.GetAsync(
+            $"/api/incidents/severity-summary?status={Uri.EscapeDataString(status)}");
+        var json = await response.Content.ReadAsStringAsync();
+        using var document = JsonDocument.Parse(json);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.True(document.RootElement.GetProperty("errors").TryGetProperty("status", out _));
+    }
 }

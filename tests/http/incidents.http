@@ -25,6 +25,18 @@ Accept: application/json
 GET {{host}}/api/incidents?status=Unknown
 Accept: application/json
 
-### Lab 1 extension point: expected 200 OK
+### T-06: severity-summary без status: 200, Critical 0, High 1, Medium 1, Low 1
 GET {{host}}/api/incidents/severity-summary
+Accept: application/json
+
+### T-06a: status=Triaged: 200, Medium 1, решта 0
+GET {{host}}/api/incidents/severity-summary?status=Triaged
+Accept: application/json
+
+### T-06b: status=Resolved: 200, усі групи з count 0
+GET {{host}}/api/incidents/severity-summary?status=Resolved
+Accept: application/json
+
+### T-06c: status=Unknown: 400 Validation Problem Details
+GET {{host}}/api/incidents/severity-summary?status=Unknown
 Accept: application/json
