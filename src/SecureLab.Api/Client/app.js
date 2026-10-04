@@ -28,34 +28,6 @@ function createTextElement(tagName, text, className) {
   return element;
 }
 
-function renderIncidentList(incidents) {
-  listElement.replaceChildren();
-
-  if (incidents.length === 0) {
-    listStatusElement.textContent = "За заданим фільтром інцидентів немає.";
-    return;
-  }
-
-  listStatusElement.textContent = `Знайдено: ${incidents.length}`;
-  for (const incident of incidents) {
-    const item = document.createElement("li");
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "incident-card";
-    button.append(
-      createTextElement("strong", incident.title),
-      createTextElement(
-        "span",
-        `${incident.severity} · ${incident.status}`,
-        "metadata",
-      ),
-    );
-    button.addEventListener("click", () => loadIncidentDetails(incident.id));
-    item.append(button);
-    listElement.append(item);
-  }
-}
-
 function renderIncidentDetails(incident) {
   const heading = createTextElement("h3", incident.title);
   const metadata = createTextElement(
@@ -174,7 +146,10 @@ async function loadSeveritySummary() {
     summaryElement.replaceChildren();
 
     if (summaryData.length === 0) {
-      summaryElement.textContent = "Даних немає.";
+      const emptyItem = document.createElement("li");
+      emptyItem.className = "details-placeholder";
+      emptyItem.textContent = "Даних немає.";
+      summaryElement.append(emptyItem);
       return;
     }
 
@@ -189,8 +164,11 @@ async function loadSeveritySummary() {
       li.append(button);
       summaryElement.append(li);
     }
-  } catch (error) {
-    summaryElement.textContent = `Помилка: ${error.message}`;
+  } catch {
+    const errorItem = document.createElement("li");
+    errorItem.className = "details-placeholder";
+    errorItem.textContent = "Не вдалося завантажити підсумок.";
+    summaryElement.replaceChildren(errorItem);
   }
 }
 

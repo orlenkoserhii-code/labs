@@ -58,25 +58,28 @@ public sealed class IncidentQueries(SecureLabDbContext dbContext, ILogger<Incide
                     .ToList()))
             .SingleOrDefaultAsync(cancellationToken);
     }
-public async Task<IReadOnlyList<IncidentSeveritySummaryResponse>> GetSeveritySummaryAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<IncidentSeveritySummaryResponse>> GetSeveritySummaryAsync(
+        IncidentStatus? status,
+        CancellationToken cancellationToken)
     {
-        var groupedData = await dbContext.Incidents
-            .AsNoTracking()
+        logger.LogInformation("Loading severity summary with status filter {Status}", status);
+
+        var query = dbContext.Incidents.AsNoTracking();
+        if (status is not null)
+        {
+            query = query.Where(incident => incident.Status == status);
+        }
+
+        var groupedData = await query
             .GroupBy(incident => incident.Severity)
-            .Select(group => new
-            {
-                Severity = group.Key,
-                Count = group.Count()
-            })
+            .Select(group => new { Severity = group.Key, Count = group.Count() })
             .ToListAsync(cancellationToken);
 
-        var allSeverities = Enum.GetValues<IncidentSeverity>();
-
-        var summary = allSeverities
+        var summary = Enum.GetValues<IncidentSeverity>()
+            .OrderByDescending(severity => severity)
             .Select(severity => new IncidentSeveritySummaryResponse(
                 severity.ToString(),
                 groupedData.FirstOrDefault(g => g.Severity == severity)?.Count ?? 0))
-            .OrderByDescending(s => Enum.Parse<IncidentSeverity>(s.Severity)) 
             .ToList();
 
         logger.LogInformation("Loaded severity summary with {GroupCount} groups", summary.Count);
