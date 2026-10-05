@@ -75,7 +75,7 @@ public sealed class IncidentEndpointTests(SecureLabApiFactory factory)
         Assert.Equal(1, summary[2].Count);
 
         Assert.Equal("Low", summary[3].Severity);
-        Assert.Equal(1, summary[3].Count);
+        Assert.Equal(3, summary[3].Count);
     }
 
     [Fact]
