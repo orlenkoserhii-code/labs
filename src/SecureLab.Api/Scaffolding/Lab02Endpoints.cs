@@ -11,14 +11,33 @@ public static class Lab02Endpoints
     {
         app.MapGet("/api/incidents/search", async (string? q, string? sortBy, SecureLabDbContext db, CancellationToken ct) =>
         {
-            var order = sortBy switch
+            if (sortBy is not (null or "" or "createdAtUtc" or "severity" or "status"))
+                return Results.ValidationProblem(new Dictionary<string, string[]>
+                {
+                    ["sortBy"] = ["Допустимі значення: createdAtUtc, severity, status."]
+                });
+
+            var literal = (q ?? "").Replace("\\", "\\\\")
+                .Replace("%", "\\%").Replace("_", "\\_");
+            var pattern = "%" + literal + "%";
+            var query = db.Incidents.AsNoTracking().Where(item =>
+                EF.Functions.ILike(item.Title, pattern, "\\")
+                || EF.Functions.ILike(item.Description, pattern, "\\"));
+
+            var ordered = sortBy switch
             {
-                null or "" or "createdAtUtc" => "created_at_utc DESC",
-                "severity" => "severity", "status" => "status", _ => sortBy
+                "severity" => query.OrderBy(item =>
+                    item.Severity == IncidentSeverity.Critical ? 0 :
+                    item.Severity == IncidentSeverity.High ? 1 :
+                    item.Severity == IncidentSeverity.Medium ? 2 : 3),
+                "status" => query.OrderBy(item =>
+                    item.Status == IncidentStatus.New ? 0 :
+                    item.Status == IncidentStatus.Triaged ? 1 :
+                    item.Status == IncidentStatus.InProgress ? 2 :
+                    item.Status == IncidentStatus.Resolved ? 3 : 4),
+                _ => query.OrderByDescending(item => item.CreatedAtUtc)
             };
-            var sql = "SELECT * FROM incidents WHERE title ILIKE '%" + (q ?? "")
-                + "%' OR description ILIKE '%" + (q ?? "") + "%' ORDER BY " + order + " LIMIT 50";
-            var rows = await db.Incidents.FromSqlRaw(sql).AsNoTracking().ToListAsync(ct);
+            var rows = await ordered.ThenBy(item => item.Id).Take(50).ToListAsync(ct);
             return Results.Ok(rows.Select(row => new
             {
                 row.Id, row.Title, row.Description,
