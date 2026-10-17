@@ -11,10 +11,18 @@ namespace SecureLab.Api.Tests;
 public sealed class Lab02ContractTests(SecureLabApiFactory factory)
     : IClassFixture<SecureLabApiFactory>, IAsyncLifetime
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private HttpClient _client = null!;
     private readonly string _prefix = $"LR02-{Guid.NewGuid():N}-";
 
-    public Task InitializeAsync() => Task.CompletedTask;
+    public async Task InitializeAsync()
+    {
+        var password =
+            Environment.GetEnvironmentVariable("SeedUsers__Password")
+            ?? throw new InvalidOperationException(
+                "Set SeedUsers__Password outside Git.");
+
+        _client = await factory.LoginAsync("alice", password);
+    }
 
     public async Task DisposeAsync()
     {
