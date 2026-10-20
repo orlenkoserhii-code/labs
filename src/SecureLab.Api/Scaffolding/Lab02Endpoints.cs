@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SecureLab.Api.Data;
 using SecureLab.Api.Data.Entities;
-
+using System.Security.Claims;
 namespace SecureLab.Api.Scaffolding;
 
 // Навчальний старт ЛР 02. Запускати лише з локальними штучними даними.
@@ -44,8 +44,15 @@ public static class Lab02Endpoints
                 Severity = row.Severity.ToString(), Status = row.Status.ToString(), row.CreatedAtUtc
             }));
         });
-        app.MapPost("/api/incidents", async (CreateIncidentRequest request, SecureLabDbContext db, CancellationToken ct) =>
+        app.MapPost("/api/incidents", async (CreateIncidentRequest request,HttpContext context, SecureLabDbContext db, CancellationToken ct) =>
         {
+            if (!Guid.TryParse(
+                    context.User.FindFirstValue(ClaimTypes.NameIdentifier),
+                    out var ownerUserId))
+            {
+                return Results.Unauthorized();
+            }
+
             var now = DateTimeOffset.UtcNow;
             var errors = new Dictionary<string, string[]>();
 
@@ -89,7 +96,7 @@ public static class Lab02Endpoints
             var incident = new Incident
             {
                 Id = Guid.NewGuid(),
-                OwnerUserId = DbSeeder.AliceId,
+                OwnerUserId = ownerUserId,
                 Title = title,
                 Description = description,
                 Severity = severity,
@@ -106,11 +113,15 @@ public static class Lab02Endpoints
                 new CreatedIncidentResponse(
                     incident.Id, incident.Title, incident.Severity.ToString(),
                     incident.Status.ToString(), incident.CreatedAtUtc));
-        });
+        })
+        .RequireAuthorization();
     }
 }
 
 public sealed record CreateIncidentRequest(
-    string? Title, string? Description, string? Severity, DateTimeOffset? OccurredAtUtc);
+    string? Title,
+    string? Description,
+    string? Severity,
+    DateTimeOffset? OccurredAtUtc);
 public sealed record CreatedIncidentResponse(
     Guid Id, string Title, string Severity, string Status, DateTimeOffset CreatedAtUtc);
