@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SecureLab — автентифікація</title>
+
+    <style>
+      body {
+        max-width: 950px;
+        margin: 32px auto;
+        padding: 0 20px;
+        font:
+          16px/1.5 system-ui,
+          sans-serif;
+        background: #f4f6fa;
+        color: #172033;
+      }
+
+      section {
+        margin-bottom: 20px;
+        padding: 20px;
+        border: 1px solid #d7deea;
+        border-radius: 12px;
+        background: white;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 12px;
+      }
+
+      input,
+      textarea,
+      select {
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        padding: 9px;
+        font: inherit;
+      }
+
+      button {
+        padding: 9px 16px;
+        margin: 4px 6px 4px 0;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      button:disabled {
+        cursor: default;
+      }
+
+      fieldset {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        min-width: 0;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+
+      #session {
+        font-weight: bold;
+      }
+
+      @media (max-width: 650px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+
+    <script src="/auth-lab.js" defer></script>
+  </head>
+
+  <body>
+    <h1>SecureLab — автентифікація</h1>
+
+    <section>
+      <h2>Поточний сеанс</h2>
+      <p id="session" role="status">Перевіряємо сеанс…</p>
+      <pre id="profile"></pre>
+
+      <button id="me" type="button">Оновити профіль</button>
+      <button id="logout" type="button" disabled>Вийти</button>
+    </section>
+
+    <div class="grid">
+      <section>
+        <h2>Реєстрація</h2>
+
+        <form id="register" method="post" action="/api/auth/register">
+          <label>
+            Ім'я користувача
+            <input
+              name="userName"
+              required
+              maxlength="256"
+              autocomplete="username"
+            />
+          </label>
+
+          <label>
+            Email
+            <input
+              name="email"
+              type="email"
+              required
+              maxlength="256"
+              autocomplete="email"
+            />
+          </label>
+
+          <label>
+            Відображуване ім'я
+            <input name="displayName" required maxlength="120" />
+          </label>
+
+          <label>
+            Пароль
+            <input
+              name="password"
+              type="password"
+              required
+              minlength="10"
+              autocomplete="new-password"
+            />
+          </label>
+
+          <button type="submit">Зареєструватися</button>
+        </form>
+      </section>
+
+      <section>
+        <h2>Вхід</h2>
+
+        <form id="login" method="post" action="/api/auth/login">
+          <label>
+            Ім'я користувача
+            <input
+              name="userName"
+              required
+              maxlength="256"
+              autocomplete="username"
+            />
+          </label>
+
+          <label>
+            Пароль
+            <input
+              name="password"
+              type="password"
+              required
+              autocomplete="current-password"
+            />
+          </label>
+
+          <button type="submit">Увійти</button>
+        </form>
+      </section>
+    </div>
+
+    <section>
+      <h2>Новий інцидент</h2>
+
+      <form id="create" method="post" action="/api/incidents">
+        <fieldset id="createFields" disabled>
+          <label>
+            Заголовок
+            <input name="title" required maxlength="160" />
+          </label>
+
+          <label>
+            Опис
+            <textarea
+              name="description"
+              required
+              maxlength="4000"
+              rows="4"
+            ></textarea>
+          </label>
+
+          <label>
+            Серйозність
+            <select name="severity">
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </label>
+
+          <p>Для High і Critical опис має містити щонайменше 40 символів.</p>
+
+          <label>
+            Дата й час події за місцевим часом
+            <input
+              name="occurredAtUtc"
+              type="datetime-local"
+              step="1"
+              required
+            />
+          </label>
+
+          <button type="submit">Створити інцидент</button>
+        </fieldset>
+      </form>
+    </section>
+
+    <section>
+      <h2>Результат останньої дії</h2>
+      <pre id="result" aria-live="polite"></pre>
+    </section>
+  </body>
+</html>
