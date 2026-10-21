@@ -1,0 +1,374 @@
+{
+  "http": {
+    "before": {
+      "utc": "2026-10-21T21:13:24.553053+00:00",
+      "passed": true,
+      "checks": [
+        {
+          "scenario": "before-owner-read",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "before-Alice-reads-Bob",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "before-Bob-state",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "before-Alice-updates-Bob",
+          "passed": true,
+          "status": 204
+        },
+        {
+          "scenario": "before-Bob-state-after-update",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "before-mutation-is-visible",
+          "passed": true
+        },
+        {
+          "scenario": "before-restore-Bob-content",
+          "passed": true,
+          "status": 204
+        },
+        {
+          "scenario": "before-Bob-restored",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "before-restoration-confirmed",
+          "passed": true
+        }
+      ]
+    },
+    "fixed": {
+      "utc": "2026-10-21T21:14:56.046812+00:00",
+      "passed": true,
+      "checks": [
+        {
+          "scenario": "A01-anonymous",
+          "passed": true,
+          "status": 401
+        },
+        {
+          "scenario": "A02-owner-read",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "A03-foreign-read",
+          "passed": true,
+          "status": 404
+        },
+        {
+          "scenario": "A10-missing-read",
+          "passed": true,
+          "status": 404
+        },
+        {
+          "scenario": "A10-same-404-contract",
+          "passed": true
+        },
+        {
+          "scenario": "A03R-analyst-read",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "A04-Bob-before",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "A04-foreign-update",
+          "passed": true,
+          "status": 404
+        },
+        {
+          "scenario": "A04-Bob-after-update",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "A04-update-does-not-change-state",
+          "passed": true
+        },
+        {
+          "scenario": "A04-foreign-delete",
+          "passed": true,
+          "status": 404
+        },
+        {
+          "scenario": "A04-Bob-after-delete",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "A04-delete-does-not-change-state",
+          "passed": true
+        },
+        {
+          "scenario": "A05-list",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "A05-known-foreign-records-absent",
+          "passed": true
+        },
+        {
+          "scenario": "A06-reporter-triage-denied",
+          "passed": true,
+          "status": 403
+        },
+        {
+          "scenario": "A06-owner-after-denial",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "A06-state-unchanged",
+          "passed": true
+        },
+        {
+          "scenario": "A12-foreign-comment",
+          "passed": true,
+          "status": 404
+        },
+        {
+          "scenario": "A12-internal-denied",
+          "passed": true,
+          "status": 404
+        },
+        {
+          "scenario": "A12-internal-analyst",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "A12-public-Bob-comment-analyst",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "A12-details-internal-visibility",
+          "passed": true
+        },
+        {
+          "scenario": "owner-create-fixture",
+          "passed": true,
+          "status": 201
+        },
+        {
+          "scenario": "A08b-fixture-before",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "A08b-forged-fields-rejected",
+          "passed": true,
+          "status": 400
+        },
+        {
+          "scenario": "A08b-fixture-after",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "A08b-public-state-unchanged",
+          "passed": true
+        },
+        {
+          "scenario": "owner-update-allowed",
+          "passed": true,
+          "status": 204
+        },
+        {
+          "scenario": "owner-update-reloaded",
+          "passed": true,
+          "status": 200
+        },
+        {
+          "scenario": "owner-update-persisted",
+          "passed": true
+        },
+        {
+          "scenario": "owner-delete-New-allowed",
+          "passed": true,
+          "status": 204
+        },
+        {
+          "scenario": "owner-delete-confirmed",
+          "passed": true,
+          "status": 404
+        }
+      ]
+    }
+  },
+  "tests": {
+    "counters": {
+      "total": "91",
+      "executed": "91",
+      "passed": "91",
+      "failed": "0",
+      "error": "0",
+      "timeout": "0",
+      "aborted": "0",
+      "inconclusive": "0",
+      "passedButRunAborted": "0",
+      "notRunnable": "0",
+      "notExecuted": "0",
+      "disconnected": "0",
+      "warning": "0",
+      "completed": "0",
+      "inProgress": "0",
+      "pending": "0"
+    },
+    "failed": [],
+    "lab04": [
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A10_ForeignAndMissingHaveSame404(method: \"GET\", child: False)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.BobCannotReadAlice_AndFakeHeaderDoesNotChangeSubject",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A05_ListContainsOnlyAllowedOwners",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A08b_OverpostingIsRejected_ProtectedStateAndRolesUnchanged(field: \"role\", value: \"Analyst\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A01_AnonymousGets401(method: \"PUT\", path: \"/api/incidents/20000000-0000-0000-0000-00000000000\"···)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A10_ForeignAndMissingHaveSame404(method: \"DELETE\", child: False)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A01_AnonymousGets401(method: \"GET\", path: \"/api/incident-comments/30000000-0000-0000-0000-000\"···)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A08b_OverpostingIsRejected_ProtectedStateAndRolesUnchanged(field: \"ownerUserId\", value: \"10000000-0000-0000-0000-000000000002\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A06_ReporterCannotTriage_AndStateIsUnchanged",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A01_AnonymousGets401(method: \"DELETE\", path: \"/api/incidents/20000000-0000-0000-0000-00000000000\"···)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A08b_OverpostingIsRejected_ProtectedStateAndRolesUnchanged(field: \"severity\", value: \"Critical\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A01_AnonymousGets401(method: \"POST\", path: \"/api/incidents/20000000-0000-0000-0000-00000000000\"···)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A01_AnonymousGets401(method: \"GET\", path: \"/api/incidents\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A08b_OverpostingIsRejected_ProtectedStateAndRolesUnchanged(field: \"id\", value: \"20000000-0000-0000-0000-000000000002\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A08b_OverpostingIsRejected_ProtectedStateAndRolesUnchanged(field: \"createdAtUtc\", value: \"2026-01-01T00:00:00Z\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuditTests.A09_DeniedTriage_RecordsSafeEventWithResponseTrace",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A10_ForeignAndMissingHaveSame404(method: \"POST\", child: False)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A12_ChildAndInternalVisibilityFollowParentPolicy",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A04_ForeignUpdateAndDeleteDoNotChangeState",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.OwnerCannotDeleteNonNewIncident_AndStateDoesNotChange",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A03R_AnalystReadsAliceDetails",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A10_ForeignAndMissingHaveSame404(method: \"PUT\", child: False)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A10_ForeignAndMissingHaveSame404(method: \"GET\", child: True)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A03_NonOwnerReadDoesNotExposeForeignDetails",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.AnalystCanReadPublicCommentOfBob",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A08b_OverpostingIsRejected_ProtectedStateAndRolesUnchanged(field: \"status\", value: \"Triaged\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A07_AnalystTriagesOnlyNew_WithoutContentUpdateRights",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A01_AnonymousGets401(method: \"GET\", path: \"/api/incidents/20000000-0000-0000-0000-00000000000\"···)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.A02_OwnerReadsUpdatesAndDeletesOwnNewIncident",
+        "outcome": "Passed"
+      },
+      {
+        "name": "SecureLab.Api.Tests.Lab04AuthorizationTests.AdministratorDoesNotBypassForeignReadPolicy",
+        "outcome": "Passed"
+      }
+    ]
+  },
+  "audit_events": [
+    {
+      "EventName": "authorization.denied",
+      "SubjectId": "10000000-0000-0000-0000-000000000001",
+      "Action": "triage",
+      "ResourceId": "20000000-0000-0000-0000-000000000001",
+      "Result": "denied",
+      "OccurredAtUtc": "2026-10-21T21:14:04.9881195+00:00",
+      "TraceId": "00-e9c2d0755a3d2e5e432124e11556fb47-3978c3227e2efaa4-00"
+    }
+  ],
+  "live_audit": [
+    "authorization.denied subject=10000000-0000-0000-0000-000000000001 action=triage resource=20000000-0000-0000-0000-000000000001 result=denied at=10/21/2026 21:14:56 +00:00 trace=00-af45a79fb590de1c5bb567f73c27e430-9000b38ede55ed09-00"
+  ],
+  "audit_response_trace": "00-af45a79fb590de1c5bb567f73c27e430-9000b38ede55ed09-00"
+}

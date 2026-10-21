@@ -1,0 +1,69 @@
+@host = http://localhost:5080
+@aliceId = 20000000-0000-0000-0000-000000000001
+@bobId = 20000000-0000-0000-0000-000000000002
+@missingId = 99999999-9999-9999-9999-999999999999
+
+### REST Client keeps the cookie in memory; never copy its value into this file.
+### Supply SeedUsers__Password in the IDE process environment.
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{"userName":"alice","password":"{{$processEnv SeedUsers__Password}}"}
+
+### A-02: 200, own details
+GET {{host}}/api/incidents/{{aliceId}}
+
+### A-03: 404 after fix; 200 in the controlled before state
+GET {{host}}/api/incidents/{{bobId}}
+
+### A-10: same 404 status, Content-Type and body except correlation fields
+GET {{host}}/api/incidents/{{missingId}}
+
+### A-05: own incidents only
+GET {{host}}/api/incidents
+
+### A-04: 404; Bob's saved state must remain unchanged (fixed state only)
+PUT {{host}}/api/incidents/{{bobId}}
+Content-Type: application/json
+
+{"title":"forbidden","description":"Заборонене редагування чужого інциденту."}
+
+### A-04: 404; fixed state only
+DELETE {{host}}/api/incidents/{{bobId}}
+
+### A-06/A-09: 403, unchanged status; audit trace matches response
+POST {{host}}/api/incidents/{{aliceId}}/triage
+
+### A-08b: 400; content, owner, role and status unchanged
+PUT {{host}}/api/incidents/{{aliceId}}
+Content-Type: application/json
+
+{"title":"forged","description":"forged","ownerUserId":"10000000-0000-0000-0000-000000000002","role":"Analyst","status":"Triaged"}
+
+### A-12: 404, comment on Bob's incident
+GET {{host}}/api/incident-comments/30000000-0000-0000-0000-000000000002
+
+### A-12: 404, internal comment on Alice's own incident
+GET {{host}}/api/incident-comments/30000000-0000-0000-0000-000000000003
+
+### Switch the in-memory session to Morgan
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{"userName":"morgan","password":"{{$processEnv SeedUsers__Password}}"}
+
+### A-03R: 200, internal comment included
+GET {{host}}/api/incidents/{{aliceId}}
+
+### A-12: 200 for Analyst
+GET {{host}}/api/incident-comments/30000000-0000-0000-0000-000000000003
+
+### A-07 uses a disposable New incident and checks history in the automated test.
+### The seed Alice incident is Triaged, so a repeat transition must return 403.
+POST {{host}}/api/incidents/{{aliceId}}/triage
+
+### End session
+POST {{host}}/api/auth/logout
+
+### A-01: 401, no redirect
+GET {{host}}/api/incidents/{{aliceId}}

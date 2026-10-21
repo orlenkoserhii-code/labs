@@ -1,0 +1,26 @@
+diff --git a/src/SecureLab.Api/Application/Incidents/IncidentQueries.cs b/src/SecureLab.Api/Application/Incidents/IncidentQueries.cs
+--- a/src/SecureLab.Api/Application/Incidents/IncidentQueries.cs
++++ b/src/SecureLab.Api/Application/Incidents/IncidentQueries.cs
+@@ -36,7 +36,7 @@
+     {
+         logger.LogInformation("Loading incident {IncidentId}", id);
+ 
+-        return IncidentAccess.Visible(dbContext.Incidents.AsNoTracking(), subject)
++        return dbContext.Incidents.AsNoTracking()
+             .Where(incident => incident.Id == id)
+             .Select(incident => new IncidentDetailsResponse(
+                 incident.Id,
+diff --git a/src/SecureLab.Api/Presentation/Endpoints/IncidentEndpoints.cs b/src/SecureLab.Api/Presentation/Endpoints/IncidentEndpoints.cs
+--- a/src/SecureLab.Api/Presentation/Endpoints/IncidentEndpoints.cs
++++ b/src/SecureLab.Api/Presentation/Endpoints/IncidentEndpoints.cs
+@@ -77,8 +77,8 @@
+     {
+         if (!IncidentSubject.TryRead(http.User, out var subject)) return Results.Unauthorized();
+         var item = await db.Incidents.SingleOrDefaultAsync(x => x.Id == id, ct);
+-        if (item is null || !IncidentAccess.Read(subject, item)) return Hidden();
+-        if (!IncidentAccess.Update(subject, item)) return Denied();
++        if (item is null) return Hidden();
++        // Controlled local IDOR: no resource permission before content update.
+ 
+         var title = request.Title?.Trim() ?? "";
+         var description = request.Description?.Trim() ?? "";

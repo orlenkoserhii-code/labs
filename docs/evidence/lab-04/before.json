@@ -1,0 +1,185 @@
+{
+  "phase": "before",
+  "utc": "2026-10-21T21:13:24.553053+00:00",
+  "base_url": "http://localhost:5080",
+  "checks": [
+    {
+      "scenario": "before-owner-read",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000001",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "20000000-0000-0000-0000-000000000001",
+          "title": "Підозрілий лист із вкладенням",
+          "description": "Одержано лист нібито від деканату. Вкладення не відкривалося.",
+          "severity": "Medium",
+          "status": "Triaged",
+          "occurredAtUtc": "2026-08-01T08:30:00+00:00",
+          "createdAtUtc": "2026-08-01T09:00:00+00:00",
+          "ownerDisplayName": "Аліса Коваль",
+          "comments": [
+            {
+              "id": "30000000-0000-0000-0000-000000000001",
+              "authorDisplayName": "Морган Литвин",
+              "text": "Заголовки листа передано аналітику.",
+              "createdAtUtc": "2026-08-01T09:30:00+00:00"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "before-Alice-reads-Bob",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000002",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "20000000-0000-0000-0000-000000000002",
+          "title": "Невідома спроба входу",
+          "description": "Система зафіксувала вхід до облікового запису з нового пристрою.",
+          "severity": "High",
+          "status": "InProgress",
+          "occurredAtUtc": "2026-08-02T14:10:00+00:00",
+          "createdAtUtc": "2026-08-02T14:20:00+00:00",
+          "ownerDisplayName": "Боб Мельник",
+          "comments": [
+            {
+              "id": "30000000-0000-0000-0000-000000000002",
+              "authorDisplayName": "Морган Литвин",
+              "text": "Розпочато перевірку журналу автентифікації.",
+              "createdAtUtc": "2026-08-02T14:40:00+00:00"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "before-Bob-state",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000002",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "20000000-0000-0000-0000-000000000002",
+          "title": "Невідома спроба входу",
+          "description": "Система зафіксувала вхід до облікового запису з нового пристрою.",
+          "severity": "High",
+          "status": "InProgress",
+          "occurredAtUtc": "2026-08-02T14:10:00+00:00",
+          "createdAtUtc": "2026-08-02T14:20:00+00:00",
+          "ownerDisplayName": "Боб Мельник",
+          "comments": [
+            {
+              "id": "30000000-0000-0000-0000-000000000002",
+              "authorDisplayName": "Морган Литвин",
+              "text": "Розпочато перевірку журналу автентифікації.",
+              "createdAtUtc": "2026-08-02T14:40:00+00:00"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "before-Alice-updates-Bob",
+      "passed": true,
+      "method": "PUT",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000002",
+      "expected": 204,
+      "response": {
+        "status": 204,
+        "content_type": "",
+        "body": null
+      }
+    },
+    {
+      "scenario": "before-Bob-state-after-update",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000002",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "20000000-0000-0000-0000-000000000002",
+          "title": "LR04-controlled-14492616110144aa8935f10d504fd9a9",
+          "description": "Контрольований локальний PoC: Alice змінює текст інциденту Bob до виправлення авторизації.",
+          "severity": "High",
+          "status": "InProgress",
+          "occurredAtUtc": "2026-08-02T14:10:00+00:00",
+          "createdAtUtc": "2026-08-02T14:20:00+00:00",
+          "ownerDisplayName": "Боб Мельник",
+          "comments": [
+            {
+              "id": "30000000-0000-0000-0000-000000000002",
+              "authorDisplayName": "Морган Литвин",
+              "text": "Розпочато перевірку журналу автентифікації.",
+              "createdAtUtc": "2026-08-02T14:40:00+00:00"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "before-mutation-is-visible",
+      "passed": true
+    },
+    {
+      "scenario": "before-restore-Bob-content",
+      "passed": true,
+      "method": "PUT",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000002",
+      "expected": 204,
+      "response": {
+        "status": 204,
+        "content_type": "",
+        "body": null
+      }
+    },
+    {
+      "scenario": "before-Bob-restored",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000002",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "20000000-0000-0000-0000-000000000002",
+          "title": "Невідома спроба входу",
+          "description": "Система зафіксувала вхід до облікового запису з нового пристрою.",
+          "severity": "High",
+          "status": "InProgress",
+          "occurredAtUtc": "2026-08-02T14:10:00+00:00",
+          "createdAtUtc": "2026-08-02T14:20:00+00:00",
+          "ownerDisplayName": "Боб Мельник",
+          "comments": [
+            {
+              "id": "30000000-0000-0000-0000-000000000002",
+              "authorDisplayName": "Морган Литвин",
+              "text": "Розпочато перевірку журналу автентифікації.",
+              "createdAtUtc": "2026-08-02T14:40:00+00:00"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "before-restoration-confirmed",
+      "passed": true
+    }
+  ],
+  "passed": true
+}

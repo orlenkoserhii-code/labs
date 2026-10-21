@@ -13,7 +13,7 @@ async function apiFetch(path, options = {}) {
 
   if (!response.ok) {
     const problem = await response.json().catch(() => null);
-    throw new Error(problem?.title ?? `HTTP ${response.status}`);
+    throw new Error(`HTTP ${response.status}: ${problem?.title ?? "Запит відхилено"}`);
   }
 
   return response.json();
@@ -92,6 +92,12 @@ async function loadIncidentDetails(id) {
 filterForm.addEventListener("submit", (event) => {
   event.preventDefault();
   loadIncidents();
+});
+
+document.querySelector("#details-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const id = String(new FormData(event.currentTarget).get("id") ?? "").trim();
+  if (id) loadIncidentDetails(id);
 });
 
 const severityWeights = {

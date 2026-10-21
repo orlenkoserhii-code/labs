@@ -7,9 +7,24 @@ using SecureLab.Api.Presentation.Contracts;
 namespace SecureLab.Api.Tests;
 
 public sealed class IncidentEndpointTests(SecureLabApiFactory factory)
-    : IClassFixture<SecureLabApiFactory>
+    : IClassFixture<SecureLabApiFactory>, IAsyncLifetime
 {
-    private readonly HttpClient _client = factory.CreateClient();
+    private HttpClient _client = null!;
+
+    public async Task InitializeAsync()
+    {
+        var password = Environment.GetEnvironmentVariable("SeedUsers__Password")
+            ?? throw new InvalidOperationException(
+                "Set SeedUsers__Password outside Git.");
+
+        _client = await factory.LoginAsync("alice", password);
+    }
+
+    public Task DisposeAsync()
+    {
+        _client.Dispose();
+        return Task.CompletedTask;
+    }
 
     [Fact]
     public async Task GetList_ReturnsSeededIncidents()
@@ -19,7 +34,7 @@ public sealed class IncidentEndpointTests(SecureLabApiFactory factory)
 
         Assert.NotNull(incidents);
         Assert.Contains(incidents, incident => incident.Id == DbSeeder.AliceIncidentId);
-        Assert.Contains(incidents, incident => incident.Id == DbSeeder.BobIncidentId);
+        Assert.DoesNotContain(incidents, incident => incident.Id == DbSeeder.BobIncidentId);
     }
 
     [Fact]

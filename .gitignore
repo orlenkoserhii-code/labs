@@ -25,3 +25,6 @@ appsettings.Local.json
 *.sql.gz
 *.log
 
+# Local laboratory 4 run output
+/tmp/lab04/
+/tmp/pdfs/
