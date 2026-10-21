@@ -1,0 +1,575 @@
+{
+  "phase": "fixed",
+  "utc": "2026-10-21T21:14:56.046812+00:00",
+  "base_url": "http://localhost:5080",
+  "checks": [
+    {
+      "scenario": "A01-anonymous",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000001",
+      "expected": 401,
+      "response": {
+        "status": 401,
+        "content_type": "application/problem+json",
+        "body": {
+          "type": "https://tools.ietf.org/html/rfc9110#section-15.5.2",
+          "title": "Unauthorized",
+          "status": 401,
+          "traceId": "00-304f043f5cc28ebd347640b11f5a569b-665c75c8218adb8c-00"
+        }
+      }
+    },
+    {
+      "scenario": "A02-owner-read",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000001",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "20000000-0000-0000-0000-000000000001",
+          "title": "Підозрілий лист із вкладенням",
+          "description": "Одержано лист нібито від деканату. Вкладення не відкривалося.",
+          "severity": "Medium",
+          "status": "Triaged",
+          "occurredAtUtc": "2026-08-01T08:30:00+00:00",
+          "createdAtUtc": "2026-08-01T09:00:00+00:00",
+          "ownerDisplayName": "Аліса Коваль",
+          "comments": [
+            {
+              "id": "30000000-0000-0000-0000-000000000001",
+              "authorDisplayName": "Морган Литвин",
+              "text": "Заголовки листа передано аналітику.",
+              "createdAtUtc": "2026-08-01T09:30:00+00:00"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "A03-foreign-read",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000002",
+      "expected": 404,
+      "response": {
+        "status": 404,
+        "content_type": "application/problem+json",
+        "body": {
+          "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+          "title": "Інцидент не знайдено",
+          "status": 404,
+          "traceId": "00-0590af78c30f4e0cf1950c5364e211da-3106923a7ffa8aa0-00"
+        }
+      }
+    },
+    {
+      "scenario": "A10-missing-read",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/99999999-9999-9999-9999-999999999999",
+      "expected": 404,
+      "response": {
+        "status": 404,
+        "content_type": "application/problem+json",
+        "body": {
+          "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+          "title": "Інцидент не знайдено",
+          "status": 404,
+          "traceId": "00-09406f300222efad0c2d591984d057e8-395ea9e723ebfbcb-00"
+        }
+      }
+    },
+    {
+      "scenario": "A10-same-404-contract",
+      "passed": true
+    },
+    {
+      "scenario": "A03R-analyst-read",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000001",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "20000000-0000-0000-0000-000000000001",
+          "title": "Підозрілий лист із вкладенням",
+          "description": "Одержано лист нібито від деканату. Вкладення не відкривалося.",
+          "severity": "Medium",
+          "status": "Triaged",
+          "occurredAtUtc": "2026-08-01T08:30:00+00:00",
+          "createdAtUtc": "2026-08-01T09:00:00+00:00",
+          "ownerDisplayName": "Аліса Коваль",
+          "comments": [
+            {
+              "id": "30000000-0000-0000-0000-000000000001",
+              "authorDisplayName": "Морган Литвин",
+              "text": "Заголовки листа передано аналітику.",
+              "createdAtUtc": "2026-08-01T09:30:00+00:00"
+            },
+            {
+              "id": "30000000-0000-0000-0000-000000000003",
+              "authorDisplayName": "Морган Литвин",
+              "text": "Внутрішня примітка аналітика.",
+              "createdAtUtc": "2026-08-01T10:05:00+00:00"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "A04-Bob-before",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000002",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "20000000-0000-0000-0000-000000000002",
+          "title": "Невідома спроба входу",
+          "description": "Система зафіксувала вхід до облікового запису з нового пристрою.",
+          "severity": "High",
+          "status": "InProgress",
+          "occurredAtUtc": "2026-08-02T14:10:00+00:00",
+          "createdAtUtc": "2026-08-02T14:20:00+00:00",
+          "ownerDisplayName": "Боб Мельник",
+          "comments": [
+            {
+              "id": "30000000-0000-0000-0000-000000000002",
+              "authorDisplayName": "Морган Литвин",
+              "text": "Розпочато перевірку журналу автентифікації.",
+              "createdAtUtc": "2026-08-02T14:40:00+00:00"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "A04-foreign-update",
+      "passed": true,
+      "method": "PUT",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000002",
+      "expected": 404,
+      "response": {
+        "status": 404,
+        "content_type": "application/problem+json",
+        "body": {
+          "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+          "title": "Інцидент не знайдено",
+          "status": 404,
+          "traceId": "00-e24251109bdb5f2dd4d4a726341e917e-4d93008f1c1d0468-00"
+        }
+      }
+    },
+    {
+      "scenario": "A04-Bob-after-update",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000002",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "20000000-0000-0000-0000-000000000002",
+          "title": "Невідома спроба входу",
+          "description": "Система зафіксувала вхід до облікового запису з нового пристрою.",
+          "severity": "High",
+          "status": "InProgress",
+          "occurredAtUtc": "2026-08-02T14:10:00+00:00",
+          "createdAtUtc": "2026-08-02T14:20:00+00:00",
+          "ownerDisplayName": "Боб Мельник",
+          "comments": [
+            {
+              "id": "30000000-0000-0000-0000-000000000002",
+              "authorDisplayName": "Морган Литвин",
+              "text": "Розпочато перевірку журналу автентифікації.",
+              "createdAtUtc": "2026-08-02T14:40:00+00:00"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "A04-update-does-not-change-state",
+      "passed": true
+    },
+    {
+      "scenario": "A04-foreign-delete",
+      "passed": true,
+      "method": "DELETE",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000002",
+      "expected": 404,
+      "response": {
+        "status": 404,
+        "content_type": "application/problem+json",
+        "body": {
+          "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+          "title": "Інцидент не знайдено",
+          "status": 404,
+          "traceId": "00-65c9e0b2aedc3f51283d73e2e5ff4ca5-dd7ac1a86ccddd3d-00"
+        }
+      }
+    },
+    {
+      "scenario": "A04-Bob-after-delete",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000002",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "20000000-0000-0000-0000-000000000002",
+          "title": "Невідома спроба входу",
+          "description": "Система зафіксувала вхід до облікового запису з нового пристрою.",
+          "severity": "High",
+          "status": "InProgress",
+          "occurredAtUtc": "2026-08-02T14:10:00+00:00",
+          "createdAtUtc": "2026-08-02T14:20:00+00:00",
+          "ownerDisplayName": "Боб Мельник",
+          "comments": [
+            {
+              "id": "30000000-0000-0000-0000-000000000002",
+              "authorDisplayName": "Морган Литвин",
+              "text": "Розпочато перевірку журналу автентифікації.",
+              "createdAtUtc": "2026-08-02T14:40:00+00:00"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "A04-delete-does-not-change-state",
+      "passed": true
+    },
+    {
+      "scenario": "A05-list",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": [
+          {
+            "id": "20000000-0000-0000-0000-000000000005",
+            "title": "Перевірка USB навчальної мережі",
+            "severity": "Low",
+            "status": "New",
+            "occurredAtUtc": "2026-08-03T09:00:00+00:00",
+            "createdAtUtc": "2026-08-03T09:00:00+00:00"
+          },
+          {
+            "id": "20000000-0000-0000-0000-000000000003",
+            "title": "Перевірка журналу комп'ютерного класу",
+            "severity": "Low",
+            "status": "New",
+            "occurredAtUtc": "2026-08-03T07:45:00+00:00",
+            "createdAtUtc": "2026-08-03T08:00:00+00:00"
+          },
+          {
+            "id": "20000000-0000-0000-0000-000000000001",
+            "title": "Підозрілий лист із вкладенням",
+            "severity": "Medium",
+            "status": "Triaged",
+            "occurredAtUtc": "2026-08-01T08:30:00+00:00",
+            "createdAtUtc": "2026-08-01T09:00:00+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "A05-known-foreign-records-absent",
+      "passed": true
+    },
+    {
+      "scenario": "A06-reporter-triage-denied",
+      "passed": true,
+      "method": "POST",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000001/triage",
+      "expected": 403,
+      "response": {
+        "status": 403,
+        "content_type": "application/problem+json",
+        "body": {
+          "type": "https://tools.ietf.org/html/rfc9110#section-15.5.4",
+          "title": "Доступ заборонено",
+          "status": 403,
+          "traceId": "00-af45a79fb590de1c5bb567f73c27e430-9000b38ede55ed09-00"
+        }
+      }
+    },
+    {
+      "scenario": "A06-owner-after-denial",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/20000000-0000-0000-0000-000000000001",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "20000000-0000-0000-0000-000000000001",
+          "title": "Підозрілий лист із вкладенням",
+          "description": "Одержано лист нібито від деканату. Вкладення не відкривалося.",
+          "severity": "Medium",
+          "status": "Triaged",
+          "occurredAtUtc": "2026-08-01T08:30:00+00:00",
+          "createdAtUtc": "2026-08-01T09:00:00+00:00",
+          "ownerDisplayName": "Аліса Коваль",
+          "comments": [
+            {
+              "id": "30000000-0000-0000-0000-000000000001",
+              "authorDisplayName": "Морган Литвин",
+              "text": "Заголовки листа передано аналітику.",
+              "createdAtUtc": "2026-08-01T09:30:00+00:00"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "scenario": "A06-state-unchanged",
+      "passed": true
+    },
+    {
+      "scenario": "A12-foreign-comment",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incident-comments/30000000-0000-0000-0000-000000000002",
+      "expected": 404,
+      "response": {
+        "status": 404,
+        "content_type": "application/problem+json",
+        "body": {
+          "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+          "title": "Інцидент не знайдено",
+          "status": 404,
+          "traceId": "00-40f7e0afd31fb2ba725d1cf27a861118-084f1b368dce225b-00"
+        }
+      }
+    },
+    {
+      "scenario": "A12-internal-denied",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incident-comments/30000000-0000-0000-0000-000000000003",
+      "expected": 404,
+      "response": {
+        "status": 404,
+        "content_type": "application/problem+json",
+        "body": {
+          "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+          "title": "Інцидент не знайдено",
+          "status": 404,
+          "traceId": "00-5a3effd6cb6b23c707187eb6e777e937-d87949a997820bda-00"
+        }
+      }
+    },
+    {
+      "scenario": "A12-internal-analyst",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incident-comments/30000000-0000-0000-0000-000000000003",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "30000000-0000-0000-0000-000000000003",
+          "authorDisplayName": "Морган Литвин",
+          "text": "Внутрішня примітка аналітика.",
+          "createdAtUtc": "2026-08-01T10:05:00+00:00"
+        }
+      }
+    },
+    {
+      "scenario": "A12-public-Bob-comment-analyst",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incident-comments/30000000-0000-0000-0000-000000000002",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "30000000-0000-0000-0000-000000000002",
+          "authorDisplayName": "Морган Литвин",
+          "text": "Розпочато перевірку журналу автентифікації.",
+          "createdAtUtc": "2026-08-02T14:40:00+00:00"
+        }
+      }
+    },
+    {
+      "scenario": "A12-details-internal-visibility",
+      "passed": true
+    },
+    {
+      "scenario": "owner-create-fixture",
+      "passed": true,
+      "method": "POST",
+      "path": "/api/incidents",
+      "expected": 201,
+      "response": {
+        "status": 201,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "4c267d93-0514-4ad4-8cfc-8412c36aa7e0",
+          "title": "LR04-http-df224b4d07b84707b63810e74df5b091",
+          "severity": "Low",
+          "status": "New",
+          "createdAtUtc": "2026-10-21T21:14:56.9330807+00:00"
+        }
+      }
+    },
+    {
+      "scenario": "A08b-fixture-before",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/4c267d93-0514-4ad4-8cfc-8412c36aa7e0",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "4c267d93-0514-4ad4-8cfc-8412c36aa7e0",
+          "title": "LR04-http-df224b4d07b84707b63810e74df5b091",
+          "description": "Власний тестовий інцидент для HTTP-перевірки оновлення й overposting.",
+          "severity": "Low",
+          "status": "New",
+          "occurredAtUtc": "2026-10-21T21:14:56.917284+00:00",
+          "createdAtUtc": "2026-10-21T21:14:56.93308+00:00",
+          "ownerDisplayName": "Аліса Коваль",
+          "comments": []
+        }
+      }
+    },
+    {
+      "scenario": "A08b-forged-fields-rejected",
+      "passed": true,
+      "method": "PUT",
+      "path": "/api/incidents/4c267d93-0514-4ad4-8cfc-8412c36aa7e0",
+      "expected": 400,
+      "response": {
+        "status": 400,
+        "content_type": "application/problem+json",
+        "body": {
+          "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+          "title": "Bad Request",
+          "status": 400,
+          "traceId": "00-fe0eb7040cc74825c32b45c85b04e493-d51699380bcb839e-00"
+        }
+      }
+    },
+    {
+      "scenario": "A08b-fixture-after",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/4c267d93-0514-4ad4-8cfc-8412c36aa7e0",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "4c267d93-0514-4ad4-8cfc-8412c36aa7e0",
+          "title": "LR04-http-df224b4d07b84707b63810e74df5b091",
+          "description": "Власний тестовий інцидент для HTTP-перевірки оновлення й overposting.",
+          "severity": "Low",
+          "status": "New",
+          "occurredAtUtc": "2026-10-21T21:14:56.917284+00:00",
+          "createdAtUtc": "2026-10-21T21:14:56.93308+00:00",
+          "ownerDisplayName": "Аліса Коваль",
+          "comments": []
+        }
+      }
+    },
+    {
+      "scenario": "A08b-public-state-unchanged",
+      "passed": true
+    },
+    {
+      "scenario": "owner-update-allowed",
+      "passed": true,
+      "method": "PUT",
+      "path": "/api/incidents/4c267d93-0514-4ad4-8cfc-8412c36aa7e0",
+      "expected": 204,
+      "response": {
+        "status": 204,
+        "content_type": "",
+        "body": null
+      }
+    },
+    {
+      "scenario": "owner-update-reloaded",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/4c267d93-0514-4ad4-8cfc-8412c36aa7e0",
+      "expected": 200,
+      "response": {
+        "status": 200,
+        "content_type": "application/json; charset=utf-8",
+        "body": {
+          "id": "4c267d93-0514-4ad4-8cfc-8412c36aa7e0",
+          "title": "LR04-owner-edit-0e417afb95c14ad282d1e5b54a781b7e",
+          "description": "Дозволене редагування власного тексту.",
+          "severity": "Low",
+          "status": "New",
+          "occurredAtUtc": "2026-10-21T21:14:56.917284+00:00",
+          "createdAtUtc": "2026-10-21T21:14:56.93308+00:00",
+          "ownerDisplayName": "Аліса Коваль",
+          "comments": []
+        }
+      }
+    },
+    {
+      "scenario": "owner-update-persisted",
+      "passed": true
+    },
+    {
+      "scenario": "owner-delete-New-allowed",
+      "passed": true,
+      "method": "DELETE",
+      "path": "/api/incidents/4c267d93-0514-4ad4-8cfc-8412c36aa7e0",
+      "expected": 204,
+      "response": {
+        "status": 204,
+        "content_type": "",
+        "body": null
+      }
+    },
+    {
+      "scenario": "owner-delete-confirmed",
+      "passed": true,
+      "method": "GET",
+      "path": "/api/incidents/4c267d93-0514-4ad4-8cfc-8412c36aa7e0",
+      "expected": 404,
+      "response": {
+        "status": 404,
+        "content_type": "application/problem+json",
+        "body": {
+          "type": "https://tools.ietf.org/html/rfc9110#section-15.5.5",
+          "title": "Інцидент не знайдено",
+          "status": 404,
+          "traceId": "00-d035bfbe4d92b272d4c4aaa5ee3def15-70509b6193f53450-00"
+        }
+      }
+    }
+  ],
+  "audit_trace_id": "00-af45a79fb590de1c5bb567f73c27e430-9000b38ede55ed09-00",
+  "automated_only": [
+    "A07 successful transition, history, repeated-transition denial and cleanup",
+    "A08b database owner/status/severity and Identity role state",
+    "A09 structured audit fields and equality with response trace"
+  ],
+  "passed": true
+}

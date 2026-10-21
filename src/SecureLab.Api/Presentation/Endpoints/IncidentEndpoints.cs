@@ -77,8 +77,8 @@ public static class IncidentEndpoints
     {
         if (!IncidentSubject.TryRead(http.User, out var subject)) return Results.Unauthorized();
         var item = await db.Incidents.SingleOrDefaultAsync(x => x.Id == id, ct);
-        if (item is null) return Hidden();
-        // Controlled local IDOR: no resource permission before content update.
+        if (item is null || !IncidentAccess.Read(subject, item)) return Hidden();
+        if (!IncidentAccess.Update(subject, item)) return Denied();
 
         var title = request.Title?.Trim() ?? "";
         var description = request.Description?.Trim() ?? "";

@@ -36,7 +36,7 @@ public sealed class IncidentQueries(SecureLabDbContext dbContext, ILogger<Incide
     {
         logger.LogInformation("Loading incident {IncidentId}", id);
 
-        return dbContext.Incidents.AsNoTracking()
+        return IncidentAccess.Visible(dbContext.Incidents.AsNoTracking(), subject)
             .Where(incident => incident.Id == id)
             .Select(incident => new IncidentDetailsResponse(
                 incident.Id,
