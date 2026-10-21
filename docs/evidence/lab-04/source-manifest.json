@@ -1,0 +1,20 @@
+{
+  "generated_utc": "2026-10-21T21:18:41.907426+00:00",
+  "git_head": "e00d237f4bd09ad47772520441a6c084e4b19a0d",
+  "state": "fixed commit tagged v0.4.0; Git metadata recorded after tag creation",
+  "vulnerable_commit": "a48a477121186815c90209ef424793293a768908",
+  "fixed_commit": "e00d237f4bd09ad47772520441a6c084e4b19a0d",
+  "v0.4.0_created": true,
+  "fixed_source_sha256_basis": "Working-tree file bytes, including Windows line endings; source text matches fixed_commit",
+  "fixed_source_sha256": {
+    "src/SecureLab.Api/Application/Incidents/IncidentAccess.cs": "f5cdcb2343b1b89f7202f93c7f5d76b867ee94d73ab55852e8a0fa2b88816a09",
+    "src/SecureLab.Api/Application/Incidents/IncidentQueries.cs": "96d424f8e94d92da08f926c2fc12d688a6964e20c3be96644d86ef68d3936b5f",
+    "src/SecureLab.Api/Presentation/Endpoints/IncidentEndpoints.cs": "62286a24e4f55e965d0f30f5d244ef78bbc1947843be7338d68ec23d5093b3d3",
+    "src/SecureLab.Api/Presentation/Contracts/UpdateIncidentRequest.cs": "b7d77c60177c805f21307f60477d36fac41a704154277387004e55d8bc6b2e1f",
+    "src/SecureLab.Api/Program.cs": "5fb458008938e031f58d2b7c2469b8cbb75a3f4b16af6a468fd9bc9a207bd3d0",
+    "src/SecureLab.Api/Client/app.js": "89e89cb2102f27d59ef4a71ecfedf7c2643d295379b06be91b2d61647c9975c6",
+    "tests/SecureLab.Api.Tests/Lab04AuthorizationTests.cs": "b4ef4d12c26afad3e23c481c9297c337eb5aeda352e32fbbb7e0d62a696dd15c",
+    "tests/SecureLab.Api.Tests/Lab04AuditTests.cs": "39f9a34ea604bbbaf1def6adb8331e253447b8e2014c4372c61417e62af21d32",
+    "tests/http/lab-04-before.patch": "90eed09553368dc8b8602282c378931c3b64276aec0cd7aac00b56a3ecbf8234"
+  }
+}
