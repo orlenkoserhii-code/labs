@@ -1,10 +1,11 @@
 {
   "generated_utc": "2026-10-21T21:18:41.907426+00:00",
-  "git_head": "c5e22f62f7acddd2bd17e2f1a1a89f44a7243f16",
-  "state": "fixed working tree, not a fixed commit",
-  "vulnerable_commit": null,
-  "fixed_commit": null,
-  "v0.4.0_created": false,
+  "git_head": "e00d237f4bd09ad47772520441a6c084e4b19a0d",
+  "state": "fixed commit tagged v0.4.0; Git metadata recorded after tag creation",
+  "vulnerable_commit": "a48a477121186815c90209ef424793293a768908",
+  "fixed_commit": "e00d237f4bd09ad47772520441a6c084e4b19a0d",
+  "v0.4.0_created": true,
+  "fixed_source_sha256_basis": "Working-tree file bytes, including Windows line endings; source text matches fixed_commit",
   "fixed_source_sha256": {
     "src/SecureLab.Api/Application/Incidents/IncidentAccess.cs": "f5cdcb2343b1b89f7202f93c7f5d76b867ee94d73ab55852e8a0fa2b88816a09",
     "src/SecureLab.Api/Application/Incidents/IncidentQueries.cs": "96d424f8e94d92da08f926c2fc12d688a6964e20c3be96644d86ef68d3936b5f",

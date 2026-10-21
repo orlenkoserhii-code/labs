@@ -41,4 +41,7 @@ Cookie mutation зберігає CSRF teaching debt до ЛР 6; concurrency/ver
 check у цьому обсязі не реалізовано. Фактичний результат: 91/91 automated
 tests (30 сценаріїв ЛР 4), 33/33 HTTP-перевірки після виправлення;
 browser owner/foreign перевірено. Докази - `report-lab-04.md` та
-`evidence/lab-04/summary.json`. Окремі commits і тег v0.4.0 ще не створені.
+`evidence/lab-04/summary.json`. Стани збережено окремими commits:
+vulnerable - `a48a477121186815c90209ef424793293a768908`;
+fixed - `e00d237f4bd09ad47772520441a6c084e4b19a0d`.
+Локальний тег `v0.4.0` указує на fixed commit.
