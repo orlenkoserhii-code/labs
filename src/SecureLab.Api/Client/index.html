@@ -16,7 +16,10 @@
           Мінімальний клієнт для дослідження шляху Browser → API → PostgreSQL.
         </p>
       </div>
-      <a href="/scalar/v1" target="_blank" rel="noreferrer">OpenAPI</a>
+      <nav>
+        <a href="/auth-lab.html">Вхід і профіль</a>
+        <a href="/scalar/v1" target="_blank" rel="noreferrer">OpenAPI</a>
+      </nav>
     </header>
 
     <main>
@@ -43,7 +46,13 @@
       </section>
       <section class="panel" aria-labelledby="details-title">
         <h2 id="details-title">Деталі</h2>
-        <div id="incident-details" class="details-placeholder">
+        <form id="details-form">
+          <label for="incident-id">ID інциденту</label>
+          <input id="incident-id" name="id" type="text" required
+            placeholder="UUID інциденту" autocomplete="off" />
+          <button type="submit">Перевірити доступ</button>
+        </form>
+        <div id="incident-details" class="details-placeholder" aria-live="polite">
           Виберіть інцидент зі списку.
         </div>
       </section>
