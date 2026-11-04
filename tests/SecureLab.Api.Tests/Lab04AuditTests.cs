@@ -34,6 +34,7 @@ public sealed class Lab04AuditTests(SecureLabApiFactory factory, ITestOutputHelp
         using var login = await client.PostAsJsonAsync("/api/auth/login",
             new { userName = "alice", password });
         Assert.Equal(HttpStatusCode.NoContent, login.StatusCode);
+        await client.UseAntiforgeryTokenAsync();
 
         await using var scope = factory.Services.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<SecureLabDbContext>();

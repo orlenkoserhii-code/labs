@@ -6,7 +6,7 @@ function renderText(element, text) {
   element.textContent = text;
 }
 async function load() {
-  const response = await fetch(`/api/incidents/${id()}`);
+  const response = await window.secureLabFetch(`/api/incidents/${id()}`);
   status.textContent = `GET: ${response.status}`;
   if (!response.ok) return;
   current = await response.json();
@@ -24,7 +24,7 @@ async function load() {
 document.querySelector("#load").addEventListener("click", load);
 document.querySelector("#edit").addEventListener("submit", async (event) => {
   event.preventDefault();
-  const response = await fetch("/api/incidents", {
+  const response = await window.secureLabFetch("/api/incidents", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
