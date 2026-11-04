@@ -104,10 +104,23 @@ select {
   font: inherit;
 }
 
-.page-header nav { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-#details-form { flex-wrap: wrap; margin: 1rem 0; }
-#incident-id { min-width: 0; width: 100%; padding: 0.6rem; font: inherit;
-  border: 1px solid #9cacc0; border-radius: 0.35rem; }
+.page-header nav {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+#details-form {
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+#incident-id {
+  min-width: 0;
+  width: 100%;
+  padding: 0.6rem;
+  font: inherit;
+  border: 1px solid #9cacc0;
+  border-radius: 0.35rem;
+}
 
 .incident-list {
   display: grid;
@@ -149,7 +162,9 @@ select {
 .severity-Low {
   border-left: 5px solid #198754;
 }
-
+.summary-panel {
+  grid-column: 1 / -1;
+}
 @media (max-width: 760px) {
   .page-header,
   .toolbar,
