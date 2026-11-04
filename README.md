@@ -5,18 +5,17 @@
 трирівневий моноліт, локальний PostgreSQL, мінімальний Vanilla JavaScript
 клієнт, відтворювані seed/reset і готовий `WebApplicationFactory` test harness.
 
-Це стан системи **до ЛР 1**. Далі студент послідовно розвиває власний проєкт:
+Поточна робоча копія містить зміни **ЛР 6, рівень «Добре»**. Результати
+перевірки й межі огляду наведено в `docs/security-review.md`.
+Студент послідовно розвиває власний проєкт:
 результат завершеної ЛР стає основою наступної. Якщо попередню роботу технічно
 не завершено, її потрібно завершити або виправити перед переходом далі.
 
-Starter навмисно не містить завершених рішень ЛР 1–6, автентифікації,
-авторизації або навмисних уразливостей. Потрібні для конкретної роботи зміни
-студент виконує у власному проєкті за методичними вказівками й лише у
-дозволеному локальному середовищі.
+Навчальні перевірки виконуються локально зі штучними даними.
 
 ## 1. Передумови
 
-- .NET SDK `10.0.302` (зафіксовано у `global.json`);
+- .NET SDK 10.0, обраний `global.json` через `10.0.100 / latestFeature`;
 - Docker із підтримкою `docker compose`;
 - Git;
 - вільні локальні порти `5080` і `54329`.
@@ -129,10 +128,57 @@ docs/                    карта архітектури, варіант, ма
 | Ознака | Перевірка |
 |---|---|
 | `connection refused` до PostgreSQL | `docker compose ... ps`, порт `54329`, стан healthcheck |
-| SDK не знайдено | `dotnet --version` має повернути `10.0.302` у цій директорії |
+| SDK не знайдено | `dotnet --version` має повернути встановлену стабільну версію 10.0 у цій директорії |
 | порт API зайнятий | зупиніть інший процес на `5080` або задайте `ASPNETCORE_URLS` |
 | migration не застосовується | перевірте `ASPNETCORE_ENVIRONMENT=Development` і connection string |
 | змінили credentials у compose | узгоджено перевизначте `ConnectionStrings__SecureLab`; не записуйте реальне значення до Git |
 
 Перед commit перегляньте `git status`, `git diff --staged` і переконайтеся, що
 до Git не потрапили `.env`, cookies, tokens, реальні passwords, dumps або logs.
+
+## 8. ЛР 6. Запуск і регресія
+
+Для наявної навчальної БД використайте її seed password. Для нової порожньої
+БД задайте власний навчальний пароль. Перевірки створюють і прибирають свої
+тестові записи. API і тести мають отримати однаковий connection string.
+
+```powershell
+$studySecret = Read-Host 'Навчальний пароль Alice, Bob, Morgan' -AsSecureString
+$env:SeedUsers__Password = [Net.NetworkCredential]::new('', $studySecret).Password
+Remove-Variable studySecret
+# За нестандартного порту/назви БД задайте ConnectionStrings__SecureLab у цьому процесі.
+dotnet restore SecureLab.sln --locked-mode
+dotnet package list --vulnerable --include-transitive --no-restore
+dotnet test tests/SecureLab.Api.Tests -c Release --no-restore
+dotnet run --project src/SecureLab.Api -c Release --no-launch-profile --environment Development --urls http://localhost:5080
+```
+
+Відкрийте `/auth-lab.html`, увійдіть, створіть інцидент і перевірте вихід.
+На `/browser-lab.html` можна створити запис і прочитати його з іншого
+сеансу Analyst. Обидві сторінки використовують спільний `csrf.js`.
+
+Для ручного API-клієнта порядок такий. Спочатку виконайте login, потім
+`GET /api/auth/csrf-token` тією самою cookie-сесією. Передавайте поле `token`
+у `X-CSRF-TOKEN` для POST/PUT/PATCH/DELETE захищених ресурсів і logout.
+Після зміни користувача отримайте новий токен. REST Client-приклади
+адаптовано у `tests/http/lab-02-checks.http` і `tests/http/lab-04-access.http`.
+
+```powershell
+dotnet test tests/SecureLab.Api.Tests -c Release --filter 'FullyQualifiedName~Lab06SecurityTests'
+```
+
+Звичайний search limiter має 60 запитів на 60 секунд. Ключ для авторизованого
+клієнта береться з перевіреного subject ID, для анонімного з'єднання з IP.
+`SearchRateLimit__PermitLimit` і `SearchRateLimit__WindowSeconds` змінюють
+параметри запуску. Тести quota використовують 2 запити / 3 секунди.
+Загальний test factory підвищує квоти до 1000, а окремі limiter-тести явно
+встановлюють низькі квоти й перевіряють 429 та відновлення.
+
+Production потребує `ConnectionStrings__SecureLab`, вимикає automatic
+migrations/reset, OpenAPI, Scalar і Development CORS, вимагає Secure cookies.
+Production integration-тест використовує TestServer із HTTPS BaseAddress.
+Справжній HTTPS deployment і HSTS перевіряються окремо.
+
+Після власного прийняття змін повторіть повний pack на прийнятому commit,
+створіть анотований `v1.0.0` і внесіть його hash у фінальний експорт звіту.
+Git-дії та приватне подання виконує автор роботи.
