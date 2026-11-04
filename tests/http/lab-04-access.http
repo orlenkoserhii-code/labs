@@ -10,6 +10,10 @@ Content-Type: application/json
 
 {"userName":"alice","password":"{{$processEnv SeedUsers__Password}}"}
 
+### Obtain a token for Alice using the same in-memory cookie jar
+# @name aliceCsrf
+GET {{host}}/api/auth/csrf-token
+
 ### A-02: 200, own details
 GET {{host}}/api/incidents/{{aliceId}}
 
@@ -24,18 +28,22 @@ GET {{host}}/api/incidents
 
 ### A-04: 404; Bob's saved state must remain unchanged (fixed state only)
 PUT {{host}}/api/incidents/{{bobId}}
+X-CSRF-TOKEN: {{aliceCsrf.response.body.$.token}}
 Content-Type: application/json
 
 {"title":"forbidden","description":"Заборонене редагування чужого інциденту."}
 
 ### A-04: 404; fixed state only
 DELETE {{host}}/api/incidents/{{bobId}}
+X-CSRF-TOKEN: {{aliceCsrf.response.body.$.token}}
 
 ### A-06/A-09: 403, unchanged status; audit trace matches response
 POST {{host}}/api/incidents/{{aliceId}}/triage
+X-CSRF-TOKEN: {{aliceCsrf.response.body.$.token}}
 
 ### A-08b: 400; content, owner, role and status unchanged
 PUT {{host}}/api/incidents/{{aliceId}}
+X-CSRF-TOKEN: {{aliceCsrf.response.body.$.token}}
 Content-Type: application/json
 
 {"title":"forged","description":"forged","ownerUserId":"10000000-0000-0000-0000-000000000002","role":"Analyst","status":"Triaged"}
@@ -52,6 +60,10 @@ Content-Type: application/json
 
 {"userName":"morgan","password":"{{$processEnv SeedUsers__Password}}"}
 
+### Obtain a fresh token after changing identity
+# @name morganCsrf
+GET {{host}}/api/auth/csrf-token
+
 ### A-03R: 200, internal comment included
 GET {{host}}/api/incidents/{{aliceId}}
 
@@ -61,9 +73,11 @@ GET {{host}}/api/incident-comments/30000000-0000-0000-0000-000000000003
 ### A-07 uses a disposable New incident and checks history in the automated test.
 ### The seed Alice incident is Triaged, so a repeat transition must return 403.
 POST {{host}}/api/incidents/{{aliceId}}/triage
+X-CSRF-TOKEN: {{morganCsrf.response.body.$.token}}
 
 ### End session
 POST {{host}}/api/auth/logout
+X-CSRF-TOKEN: {{morganCsrf.response.body.$.token}}
 
 ### A-01: 401, no redirect
 GET {{host}}/api/incidents/{{aliceId}}

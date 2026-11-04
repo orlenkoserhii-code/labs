@@ -18,6 +18,8 @@ public sealed class SecureLabApiFactory
         {
             services.PostConfigure<LoginRateLimitOptions>(
                 options => options.PermitLimit = 1000);
+            services.PostConfigure<SearchRateLimitOptions>(
+                options => options.PermitLimit = 1000);
         });
     }
 }

@@ -21,7 +21,7 @@ async function apiFetch(path, options = {}) {
     throw new UiError("Потрібна адреса цього застосунку.");
   }
 
-  return fetch(url, {
+  return window.secureLabFetch(url, {
     ...options,
     credentials: "same-origin",
     cache: "no-store",
