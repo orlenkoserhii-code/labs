@@ -3,6 +3,7 @@ using SecureLab.Api.Data;
 using SecureLab.Api.Data.Entities;
 using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Antiforgery;
 namespace SecureLab.Api.Scaffolding;
 
 public static class Lab03Identity
@@ -37,6 +38,13 @@ public static class Lab03Identity
 
     public static void MapLab03Identity(this WebApplication app)
     {
+        app.MapGet("/api/auth/csrf-token", (HttpContext context, IAntiforgery antiforgery) =>
+        {
+            var tokens = antiforgery.GetAndStoreTokens(context);
+            context.Response.Headers.CacheControl = "no-store";
+            return Results.Ok(new { token = tokens.RequestToken });
+        }).RequireAuthorization();
+
         app.MapPost("/api/auth/register", async (
             RegistrationInput input,
             UserManager<ApplicationUser> users) =>

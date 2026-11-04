@@ -22,12 +22,15 @@ MISSING = "99999999-9999-9999-9999-999999999999"
 
 class Client:
     def __init__(self):
+        self.csrf_token = None
         self.opener = urllib.request.build_opener(
             urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
 
     def request(self, method, path, data=None):
         encoded = None if data is None else json.dumps(data).encode("utf-8")
         headers = {"Accept": "application/json"}
+        if method in {"POST", "PUT", "PATCH", "DELETE"} and self.csrf_token:
+            headers["X-CSRF-TOKEN"] = self.csrf_token
         if encoded is not None:
             headers["Content-Type"] = "application/json"
         request = urllib.request.Request(BASE + path, data=encoded,
@@ -50,11 +53,18 @@ class Client:
         return {"status": status, "content_type": content_type, "body": body}
 
     def login(self, name, password):
+        self.csrf_token = None
         result = self.request("POST", "/api/auth/login",
             {"userName": name, "password": password})
         if result["status"] != 204:
             raise RuntimeError("Login failed for " + name + ": status="
                 + str(result["status"]) + ". Check seed password or login quota.")
+        token_result = self.request("GET", "/api/auth/csrf-token")
+        if token_result["status"] != 200 or not isinstance(token_result["body"], dict):
+            raise RuntimeError("Antiforgery token request failed; values omitted.")
+        self.csrf_token = token_result["body"].get("token")
+        if not self.csrf_token:
+            raise RuntimeError("Missing antiforgery token; values omitted.")
         return self
 
 

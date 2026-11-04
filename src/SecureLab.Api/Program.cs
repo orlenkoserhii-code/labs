@@ -4,6 +4,7 @@ using Scalar.AspNetCore;
 using SecureLab.Api.Application.Incidents;
 using SecureLab.Api.Data;
 using SecureLab.Api.Presentation.Endpoints;
+using Microsoft.AspNetCore.Antiforgery;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -12,6 +13,14 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 });
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-CSRF-TOKEN";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment()
+        ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+});
 // Invalid JSON/extra DTO fields remain client errors in Development as well.
 builder.Services.Configure<RouteHandlerOptions>(options => options.ThrowOnBadRequest = false);
 
@@ -47,27 +56,31 @@ if (resetRequested)
     return;
 }
 
-app.UseExceptionHandler();
-app.UseStatusCodePages();
-
 var csp = "default-src 'self'; frame-ancestors 'none'";
 
 app.Use(async (context, next) =>
 {
-    context.Response.Headers.XContentTypeOptions = "nosniff";
-    context.Response.Headers["Referrer-Policy"] = "no-referrer";
-
     var isDevelopmentApiReference =
         app.Environment.IsDevelopment()
         && context.Request.Path.StartsWithSegments("/scalar");
 
-    if (!isDevelopmentApiReference)
+    // Register outside the exception handler so Response.Clear() cannot erase the policy.
+    context.Response.OnStarting(() =>
     {
-        context.Response.Headers["Content-Security-Policy"] = csp;
-    }
+        context.Response.Headers.XContentTypeOptions = "nosniff";
+        context.Response.Headers["Referrer-Policy"] = "no-referrer";
+        if (!isDevelopmentApiReference)
+        {
+            context.Response.Headers["Content-Security-Policy"] = csp;
+        }
+        return Task.CompletedTask;
+    });
 
     await next(context);
 });
+
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 
 if (app.Environment.IsDevelopment())
 {
@@ -83,6 +96,32 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
+
+app.Use(async (context, next) =>
+{
+    var method = context.Request.Method;
+    var changesState = HttpMethods.IsPost(method) || HttpMethods.IsPut(method)
+        || HttpMethods.IsPatch(method) || HttpMethods.IsDelete(method);
+    // Login and registration accept explicit credentials, not an authenticated cookie.
+    var isCredentialEndpoint = context.Request.Path.Equals("/api/auth/login")
+        || context.Request.Path.Equals("/api/auth/register");
+    if (changesState && context.Request.Path.StartsWithSegments("/api")
+        && context.User.Identity?.IsAuthenticated == true && !isCredentialEndpoint)
+    {
+        try
+        {
+            await context.RequestServices.GetRequiredService<IAntiforgery>()
+                .ValidateRequestAsync(context);
+        }
+        catch (AntiforgeryValidationException)
+        {
+            await Results.Problem(title: "Antiforgery validation failed",
+                statusCode: StatusCodes.Status400BadRequest).ExecuteAsync(context);
+            return;
+        }
+    }
+    await next(context);
+});
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

@@ -43,7 +43,7 @@ public static class Lab02Endpoints
                 row.Id, row.Title, row.Description,
                 Severity = row.Severity.ToString(), Status = row.Status.ToString(), row.CreatedAtUtc
             }));
-        });
+        }).RequireRateLimiting(LoginProtection.SearchPolicyName);
         app.MapPost("/api/incidents", async (CreateIncidentRequest request,HttpContext context, SecureLabDbContext db, CancellationToken ct) =>
         {
             if (!Guid.TryParse(

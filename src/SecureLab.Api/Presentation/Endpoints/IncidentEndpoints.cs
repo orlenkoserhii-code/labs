@@ -156,6 +156,10 @@ public static class IncidentEndpoints
             CreatedAtUtc = item.UpdatedAtUtc
         });
         await db.SaveChangesAsync(ct);
+        logs.CreateLogger("SecureLab.Authorization").LogInformation(
+            "{EventName} subject={SubjectId} action={Action} resource={ResourceId} result={Result} at={OccurredAtUtc} trace={TraceId}",
+            "incident.triaged", subject.Id, "triage", id, "allowed", item.UpdatedAtUtc,
+            Activity.Current?.Id ?? http.TraceIdentifier);
         return Results.NoContent();
     }
 }
