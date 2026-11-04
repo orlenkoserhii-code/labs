@@ -48,19 +48,25 @@
         <h2 id="details-title">Деталі</h2>
         <form id="details-form">
           <label for="incident-id">ID інциденту</label>
-          <input id="incident-id" name="id" type="text" required
-            placeholder="UUID інциденту" autocomplete="off" />
+          <input
+            id="incident-id"
+            name="id"
+            type="text"
+            required
+            placeholder="UUID інциденту"
+            autocomplete="off"
+          />
           <button type="submit">Перевірити доступ</button>
         </form>
-        <div id="incident-details" class="details-placeholder" aria-live="polite">
+        <div
+          id="incident-details"
+          class="details-placeholder"
+          aria-live="polite"
+        >
           Виберіть інцидент зі списку.
         </div>
       </section>
-      <section
-        style="grid-column: span 2"
-        class="panel"
-        aria-labelledby="summary-title"
-      >
+      <section class="panel summary-panel" aria-labelledby="summary-title">
         <h2 id="summary-title">Підсумок за критичністю</h2>
         <ul id="severity-summary" class="incident-list">
           <li class="details-placeholder">Завантаження…</li>
